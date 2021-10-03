@@ -1,20 +1,52 @@
 {
   "name": "hashnote",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "analyze": "cross-env ANALYZE=true next build",
+    "analyze:server": "cross-env BUNDLE_ANALYZE=server next build",
+    "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build"
   },
   "dependencies": {
+    "@chakra-ui/react": "^1.6.6",
+    "@emotion/css": "^11.1.3",
+    "@emotion/react": "11",
+    "@emotion/styled": "11",
+    "@next-auth/mongodb-adapter": "^0.0.2-next.281",
+    "axios": "^0.21.1",
+    "framer-motion": "4",
+    "lambda-rate-limiter": "^3.0.1",
+    "mongodb": "^4.1.2",
     "next": "11.1.0",
+    "next-auth": "4.0.0-beta.2",
+    "prismjs": "^1.25.0",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "react-icons": "^4.2.0",
+    "react-query": "^3.21.0",
+    "slate": "^0.65.3",
+    "slate-history": "^0.65.3",
+    "slate-react": "^0.65.3"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^11.1.2",
+    "@types/react": "^17.0.19",
+    "cross-env": "^7.0.3",
     "eslint": "7.32.0",
-    "eslint-config-next": "11.1.0"
+    "eslint-config-next": "11.1.0",
+    "serve": "^12.0.0",
+    "typescript": "^4.3.5"
+  },
+  "peerOptionalDependencies": {
+    "mongodb": "3.5.9"
+  },
+  "peerDependenciesMeta": {
+    "mongodb": {
+      "optional": true
+    }
   }
 }
