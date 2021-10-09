@@ -1,20 +1,22 @@
 import {
-    Button,Flex,Spinner,Text,Box,BoxProps,
+    Flex,Box,Spinner,Icon,Text,Tooltip,
     Modal, ModalOverlay, ModalContent,
-    ModalHeader, ModalFooter, ModalBody, ModalCloseButton,Image,Icon,IconButton,
-  useDisclosure,useColorModeValue,Tooltip,
+    ModalHeader, ModalBody,
+    useDisclosure,useColorModeValue,
 
 } from "@chakra-ui/react"
-import axios from '@utils/axios';
 import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-import { CreateTextIcon, CreateCodeIcon } from "@utils/customIcons";
+
+import axios from '@utils/axios';
+import { CreateTextIcon, CreateCodeIcon } from "@utils/customSVG";
+
 const createNote = async (type:string) => {
   const note = await axios.post('/api/note/create', {type});
   return note;
 }
 
-const ModalStuff = ({isLoading,isError,isSuccess,data,router,error}) => {
+const ModalJSX = ({isLoading,isError,isSuccess,data,router,error}) => {
   if (isLoading) {
       return (
           <Flex align="center" justify="center" m="4">
@@ -56,9 +58,10 @@ export default function CreateNoteModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const mutation = useMutation("create", createNote);
   const router = useRouter();
+  const properties = { ...mutation, router };
   return (
     <>
-      <Tooltip hasArrow placement="bottom-start" fontSize="md"
+      <Tooltip placement="bottom-start" fontSize="md"
          label="Create Note" openDelay={150} closeDelay={100} shouldWrapChildren>
         <Icon
           color={useColorModeValue("gray-200","white-alpha-300")}
@@ -69,19 +72,13 @@ export default function CreateNoteModal() {
           w="45px"
           m="2"
           p="2px"
-          // _hover={
-          //   {
-          //     bg: useColorModeValue("gray.100","gray.700"),
-          //     borderRadius: "10%"
-          //   }
-          // }
           onClick={() => {
             onOpen();
             mutation.mutate('text');
           }
           } />
       </Tooltip>
-      <Tooltip hasArrow placement="bottom-start" fontSize="md"
+      <Tooltip placement="bottom-start" fontSize="md"
          label="Create Code" openDelay={150} closeDelay={100} shouldWrapChildren>
         <Icon
           color={useColorModeValue("gray-100","white-alpha-300")}
@@ -93,12 +90,6 @@ export default function CreateNoteModal() {
           m="2"
           p="2px"
           pr="5px"
-          // _hover={
-          //   {
-          //     bg: useColorModeValue("gray.200","gray.700"),
-          //     borderRadius: "10%"
-          //   }
-          // }
           onClick={() => {
             onOpen();
             mutation.mutate('code');
@@ -110,7 +101,7 @@ export default function CreateNoteModal() {
         <ModalContent opacity="0.8" bg={useColorModeValue('gray.200', 'gray.800')}>
           <ModalHeader>Creating your note...</ModalHeader>
           <ModalBody>
-            { isOpen?ModalStuff({ ...mutation, router }):null}
+            {isOpen ? <ModalJSX {...properties}/>:null}
           </ModalBody>
         </ModalContent>
       </Modal>

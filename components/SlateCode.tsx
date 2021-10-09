@@ -18,22 +18,16 @@ import 'prismjs/components/prism-powershell'
 import 'prismjs/components/prism-batch'
 import 'prismjs/components/prism-bash'
 
-import React, { useState, useCallback, useMemo,useEffect } from 'react'
-import { Slate, Editable, withReact } from 'slate-react'
-import { Text, createEditor, Element as SlateElement, Descendant } from 'slate'
+import React, {useCallback, useMemo } from 'react'
+import { Slate, Editable, withReact,ReactEditor } from 'slate-react'
+import { Text, createEditor } from 'slate'
 import { withHistory } from 'slate-history'
 import { css } from '@emotion/css'
-import {
-    Flex,Box,
-    Select,
-    useColorModeValue
-} from '@chakra-ui/react';
-
 
 export default function SlateCode({value,onValueChange,language}) {
     const renderLeaf = useCallback(props => <Leaf {...props} />, [])
     const renderElement = useCallback(props => <Element {...props} />, [])
-    const editor = useMemo(() => withHistory(withReact(createEditor())), [])
+    const editor = useMemo(() => withHistory(withReact(createEditor() as ReactEditor)), [])
     // decorate function depends on the language selected
     const decorate = useCallback(
         ([node, path]) => {
@@ -106,7 +100,7 @@ export default function SlateCode({value,onValueChange,language}) {
     }
 
     const Element = ({ attributes, children, element }) => {
-        return <pre contentEditable {...attributes}>{children}</pre>
+        return <pre {...attributes}>{children}</pre>
     }
     // different token types, styles found on Prismjs website
     const Leaf = ({ attributes, children, leaf }) => {

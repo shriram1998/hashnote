@@ -2,7 +2,7 @@ import { serialize } from "@utils/helper";
 import { ReactElement } from "react";
 import Link from "next/link";
 import {
-    Flex,VStack, Box, Heading, Text,Image,IconButton,
+    Flex, Box, Heading, Text,IconButton,
     useColorModeValue, useColorMode, WrapItem,
 } from '@chakra-ui/react';
 
@@ -12,8 +12,10 @@ import { MONTHS } from "@utils/constants";
 
 export default function SlateThumbnail({ data }) {
     const { colorMode } = useColorMode();
+    
     let plainText = serialize(JSON.parse(data.value));
-    let icon:ReactElement;
+    let icon: ReactElement;
+    
     switch (data.type) {
         case 'code':
             plainText = plainText.split('\n').slice(0, 18);
@@ -24,18 +26,18 @@ export default function SlateThumbnail({ data }) {
             icon = <CgList />;
             break;
     }
-    let thumbnailText = () => {
+    let ThumbnailText = () => {
         switch (data.type) {
             case 'text':    
                 return (
-                    <Text as="p" color={useColorModeValue("gray.600", "gray.200")}>
+                    <Text as="p" color={colorMode==='light'? "gray.600": "gray.200"}>
                         {plainText}
                     </Text>
                 );
             case 'code':
                 return plainText.map((val,ix) => {
                     return (
-                        <Text key={ix} isTruncated as="pre" color={useColorModeValue("gray.600", "gray.200")}>
+                        <Text key={ix} isTruncated as="pre" color={colorMode==='light'? "gray.600": "gray.200"}>
                             {val}
                         </Text>
                     );
@@ -44,6 +46,7 @@ export default function SlateThumbnail({ data }) {
     }
     let date = new Date(data.lastModified);
     let readableDate = MONTHS[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear().toString().slice(2, 4);
+    
     return (
         <WrapItem>
             <Link href={`/note/${data._id}`}>
@@ -96,7 +99,7 @@ export default function SlateThumbnail({ data }) {
                             >
                             {data.title?data.title:""}
                         </Heading>
-                        {thumbnailText()}
+                        <ThumbnailText/>
                     </Box>
                     <Box position="absolute" bottom="0" mb="4px">
                         <Text size="sm" color="gray.400">{ readableDate}</Text>

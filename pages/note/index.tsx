@@ -1,23 +1,28 @@
-import { useEffect,useState } from 'react';
+import { useEffect,useState,ReactElement } from 'react';
 import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
+
 import {
-  Flex, Spacer, VStack, HStack, Wrap,Box,Grid,
-  Spinner, Text, 
-  Button, Icon,IconButton,Checkbox,
+  Flex, Spacer, VStack, Wrap,Box,
+  Text,Icon,useColorMode,
 } from '@chakra-ui/react';
 import { useQuery } from 'react-query';
 
 import {
     FiFilter,
 } from 'react-icons/fi';
-import { AiFillStar,AiOutlineStar } from 'react-icons/ai';
+import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
+
 import axios from '@utils/axios';
 import { useSession } from '@utils/useSession';
-import { capitalizeFirstLetter, isSubset,objectCompare } from '@utils/helper';
+import { isSubset, objectCompare } from '@utils/helper';
+import { NoNote } from '@utils/customSVG';
+
 import FilterTags from '@components/FilterTags';
 import CreateNote from '@components/CreateNote';
-import SkeletonComp from '@components/Skeleton';
+import SkeletonIndex from '@components/SkeletonIndex';
 import SlateThumbnail from '@components/SlateThumbnail';
+
 const fetchNotes = async () => {
   const notes = await axios.get('/api/note');
   return notes;
@@ -27,7 +32,10 @@ export default function NotesIndex() {
   const [session, loading] = useSession();
   const router = useRouter();
   const { isLoading, isError, data, error } = useQuery("note", fetchNotes);
-  const [tagQuery, setTagQuery] = useState({tags:[],type:[],fav:false});
+  const { colorMode } = useColorMode();
+  
+  const [tagQuery, setTagQuery] = useState({ tags: [], type: [], fav: false });
+
   useEffect(() => {
     let selectedTags = router.query.tags;
     let selectedType = router.query.type;
@@ -59,19 +67,9 @@ export default function NotesIndex() {
   if (session) {
     if (isLoading) {
       return (
-        <Flex
-          h="100vh"
-          justify="center"
-          fontSize="30"
-        >
-          <VStack w="100%" spacing="4">
-            <HStack mb="4">
-              <Text>Almost there</Text>
-              <Spinner ml="2" size="md" />
-            </HStack>
-            {SkeletonComp}
-          </VStack>
-        </Flex>
+        <>
+            <SkeletonIndex/>
+        </>
       );
     }
     if (isError) {
@@ -91,34 +89,51 @@ export default function NotesIndex() {
         </Flex>
       );
     }
-    let filteredData = data.data.filter(note => {
-      return (
-        isSubset(note.tags, tagQuery.tags) &&
-        (tagQuery.type.length===0 || note.type === tagQuery.type[0].toLowerCase()) &&
-        (tagQuery.fav?note.favourite===true:true)
-      );
-    });
-    if (!filteredData.length) {
+    let allTags = [];
+    let allType = [];
+    let favFlag = false;
+    let thumbnailJSX: ReactElement;
+    let nullJSX: ReactElement;
+
+    if (data.data.length) {
+      let filteredData = data.data.filter(note => {
+        return (
+          isSubset(note.tags, tagQuery.tags) &&
+          (tagQuery.type.length === 0 || note.type === tagQuery.type[0].toLowerCase()) &&
+          (tagQuery.fav ? note.favourite === true : true)
+        );
+      });
+      if (!filteredData.length) {
         setTagQuery({ tags: [], type: [], fav: false });
         router.push('/note');
+        }
+        filteredData = filteredData.sort((a, b) => objectCompare(a, b, 'lastModified'));
+        allTags = Array.from(new Set(filteredData.map(note => note.tags).flat()));
+
+        let textFlag = filteredData.some(note => note.type === 'text');
+        let codeFlag = filteredData.some(note => note.type === 'code');
+        allType = [];
+        if (textFlag) { allType.push('Text') }
+        if (codeFlag) { allType.push('Code') }
+      
+        favFlag = filteredData.some(note => note.favourite === true);
+
+        thumbnailJSX = filteredData.map(data => {
+          return (
+            <SlateThumbnail key={data._id} data={data} />
+          );
+        });
       }
-    
-    filteredData = filteredData.sort((a, b) => objectCompare(a, b, 'lastModified'));
-    let allTags = Array.from(new Set(filteredData.map(note => note.tags).flat()));
-
-    let textFlag = filteredData.some(note => note.type === 'text');
-    let codeFlag = filteredData.some(note => note.type === 'code');
-    let allType = [];
-    if (textFlag) { allType.push('Text') }
-    if (codeFlag) { allType.push('Code') }
-    
-    let favFlag = filteredData.some(note => note.favourite === true);
-
-    let thumbnaiJSX = filteredData.map(data => {
-      return (
-        <SlateThumbnail key={data._id} data={data} />
-      );
-    });
+      else {
+        nullJSX = (
+          <Flex w="100%" m="4" justifyContent="center">
+            <VStack>
+              <Text fontSize="2xl">No notes found. Add them to get started.</Text>
+              <NoNote opacity="0.15" />
+            </VStack>
+          </Flex>
+        );
+      }
     return (
       <>
          <Flex align="center" mb="4" ml="4" flexWrap="wrap">
@@ -133,30 +148,24 @@ export default function NotesIndex() {
               boxSize="6"
               aria-label="Toggle favourite note filter"
               as={tagQuery.fav ? AiFillStar : AiOutlineStar}
-              color="yellow.400"
+              color={tagQuery.fav ? "yellow.400" :colorMode==='light'? 'gray.700':'gray.50'}
               onClick={handleFav}
             /> : '\u00A0\u00A0\u00A0\u00A0\u00A0'}
           </Box>
         </Flex>
-        <Wrap spacing="35px" mt="10"  mx="2">
-          {thumbnaiJSX}
-        </Wrap>
+        {data.data.length === 0 ? nullJSX : (
+          <Wrap spacing="35px" mt="10" mx="2">
+            {thumbnailJSX}
+          </Wrap>
+        )}
       </>
     );
   }
-  else if (typeof window !== 'undefined' && loading) {
-    return (<Flex
-        h="100vh"
-        justify="center"
-        fontSize="30"
-      >
-      <VStack w="100%" spacing="4">
-        <HStack mb="4">
-          <Text>Please wait, Loading page</Text>
-          <Spinner ml="2" size="md" />
-        </HStack>
-      </VStack>
-      </Flex>
+  else if (loading) {
+    return (
+        <>
+          <SkeletonIndex/>
+        </>
       );
   }
   else {

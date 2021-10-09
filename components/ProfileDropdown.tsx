@@ -4,17 +4,13 @@ import {
     MenuItem,
     MenuList,
 } from '@chakra-ui/react';
-import { signOut } from 'next-auth/client';
+import { signOut } from 'next-auth/react';
 
 export default function ProfileDropdown() {
     return (
         <MenuList
-            bg={useColorModeValue('white', 'gray.900')}
+            bg={useColorModeValue('white', 'black')}
             borderColor={useColorModeValue('gray.200', 'gray.700')}>
-            {/* <MenuItem>Profile</MenuItem>
-            <MenuItem>Settings</MenuItem>
-            <MenuItem>Billing</MenuItem>
-            <MenuDivider /> */}
             <MenuItem onClick={() => { signOut()} }>Sign out</MenuItem>
         </MenuList>
     )

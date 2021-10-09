@@ -3,20 +3,20 @@ import {
     FiSave
 } from 'react-icons/fi';
 import { BsCheck } from 'react-icons/bs';
+
 export default function SaveButton({ state,onSave,...rest }) {
     switch (state) {
         case "Saved": return (
             <Button
                 size="sm"
                 disabled
-                rightIcon={<BsCheck />}
                 colorScheme="blue"
                 spinnerPlacement="end"
                 variant="outline"
                 borderWidth="0"
                 {...rest}
             >
-                Saved
+                <BsCheck />
             </Button>);
         case "Saving": return (
             <Button
@@ -33,7 +33,6 @@ export default function SaveButton({ state,onSave,...rest }) {
         case "Save": return (
             <Button
                 size="sm"
-                rightIcon={<FiSave />}
                 colorScheme="blue"
                 spinnerPlacement="end"
                 variant="outline"
@@ -41,21 +40,20 @@ export default function SaveButton({ state,onSave,...rest }) {
                 onClick={onSave}
                 {...rest}
                 >
-                    Save
+                    <FiSave />
                 </Button>
         );
         default:return (
             <Button
                 size="sm"
                 disabled
-                rightIcon={<FiSave />}
                 colorScheme="blue"
                 spinnerPlacement="end"
                 variant="outline"
                 borderWidth="0"
                 {...rest}
                 >
-                    Saved
+                    <FiSave />
                 </Button>
         );
     }       

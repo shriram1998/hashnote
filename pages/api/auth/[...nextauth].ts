@@ -1,16 +1,20 @@
 import NextAuth from 'next-auth';
-import Providers from 'next-auth/providers';
-import Adapters from 'next-auth/adapters';
+import GithubProvider from "next-auth/providers/github"
+import GoogleProvider from "next-auth/providers/google"
+import { MongoDBAdapter } from "@next-auth/mongodb-adapter"
+import { connectToDatabase } from "@utils/database";
+
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async(req:NextApiRequest, res:NextApiResponse) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
+    const { db } = await connectToDatabase();
     NextAuth(req,res,{
         providers: [
-            Providers.GitHub({
+            GithubProvider({
                 clientId: process.env.GITHUB_CLIENT_ID,
                 clientSecret:process.env.GITHUB_CLIENT_SECRET
             }),
-            Providers.Google({
+            GoogleProvider({
                 clientId: process.env.GOOGLE_CLIENT_ID,
                 clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             }),
@@ -24,7 +28,7 @@ export default async(req:NextApiRequest, res:NextApiResponse) => {
             jwt: true,
             maxAge: 24 * 60 * 60*30
         },
-        adapter: Adapters.TypeORM.Adapter(process.env.MONGODB_URI),
+        adapter: MongoDBAdapter({ db}),
     });
 }
 export const config = {

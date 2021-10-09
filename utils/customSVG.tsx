@@ -1,4 +1,4 @@
-import { Box,useColorModeValue,useColorMode } from "@chakra-ui/react";
+import { Box,useColorMode } from "@chakra-ui/react";
 export const CreateTextIcon = (props = null) => {
   return (
     <Box
@@ -51,7 +51,7 @@ export const CreateCodeIcon = (props = null) => {
     >
      
       <defs><clipPath id="a"><path d="M.488 0h35.024v35.027H.488Zm0 0" /></clipPath><clipPath id="b"><path d="M8.922 12H15v11H8.922Zm0 0" /></clipPath><clipPath id="c"><path d="M24 12h6.086v11H24Zm0 0" /></clipPath><clipPath id="d"><path d="M16 8.797h8v17.512h-8Zm0 0" /></clipPath><clipPath id="e"><path d="M3.004 5.836h10.215v10.219H3.004Zm0 0" /></clipPath></defs>
-      <g clipPath="url(#a)" fill={colorMode === "light" ? "white":"var(--chakra-colors-gray-800)"}>
+      <g clipPath="url(#a)" fill={colorMode === "light" ? "white":"var(--chakra-colors-black)"}>
         <path d="M.488 0h35.024v42.324H.488Zm0 0" />
         <path d="M.488 0h35.024v35.027H.488Zm0 0" />
         <path d="M.488 0h35.024v35.027H.488Zm0 0" />
@@ -70,4 +70,21 @@ export const CreateCodeIcon = (props = null) => {
       </g>
     </Box>
   );
+}
+export function NoNote(props = null) {
+  return (
+    <Box
+      as="svg"
+      fill="currentcolor"
+      aria-hidden="true"
+      focusable="false"
+      xmlns="http://www.w3.org/2000/svg"
+      contentScriptType="text/ecmascript"
+      viewBox="-10 -10 100 100"
+      version="1.2"
+      {...props}
+    >
+    <path d="M74.66 19.332 43.902 1.391c-.222-.149-.37-.149-.597-.149l-5.942.371-5.945-.37c-.223 0-.445 0-.594.148L.062 19.332c-.296.148-.593.52-.593.887 0 .593.445 1.11.965 1.11l4.609.296L.508 35.289c-.149.516.074 1.031.445 1.254l4.465 2.586v16.91c0 .367.223.738.52.887L36.472 74.5c.074 0 .074.074.148.074.05 0 .078.024.074.074.25.102.496.102.746 0 .051 0 .075-.023.075-.074.078 0 .078 0 .148-.074L68.2 56.926c.364-.219.54-.54.524-.961l.148-16.985 4.309-2.511a.91.91 0 0 0 .48-.54.92.92 0 0 0-.035-.718l-4.531-13.66 4.972-.297a.973.973 0 0 0 .739-.332c.09-.11.156-.227.199-.363.039-.133.05-.27.027-.41.153-.297-.07-.665-.37-.817ZM38.402 4.566l13.817 8.051L65.89 20.59 47.69 31.3l-9.289-5.39ZM4.074 19.484 31.641 3.387l2.23.144-4.68 2.735-7.73 4.504-15.156 8.863ZM36.25 4.566V25.91l-9.29 5.39-4.456-2.585-13.82-8.047 13.82-8.05ZM2.89 35.141 7.2 22.289l28.75 16.984-4.16 12.782-14.267-8.348-10.328-6.059ZM36.103 71.77 7.645 55.445V40.383l8.77 5.094 15.374 9.011c.52.293 1.191.145 1.488-.37a.274.274 0 0 0 .075-.223l2.746-8.418Zm1.265-34.34-8.324-4.875 8.32-4.801 8.246 4.726Zm29.344 18.02L38.254 71.843v-26.29l2.75 8.419c0 .078.074.148.074.222.297.516.965.664 1.484.367l15.383-9.011 8.914-5.242Zm4.832-20.235-4.09 2.363-10.55 6.203-14.266 8.274-4.16-12.778 14.863-8.644 13.965-8.121Zm-3.125-15.582-15.16-8.863L40.855 3.53l2.227-.144L70.574 19.41Zm0 0"/>
+  </Box>
+  )
 }

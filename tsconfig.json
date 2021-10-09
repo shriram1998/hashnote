@@ -27,7 +27,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "public/LCS.js", "pages/jodit.js", "utils/useCKEditor.js"  ],
+, "public/LCS.js"  ],
   "exclude": [
     "node_modules"
   ]

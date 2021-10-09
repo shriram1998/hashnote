@@ -1,4 +1,4 @@
-import { MongoClient } from 'mongodb'
+import { MongoClient,MongoClientOptions } from 'mongodb'
 
 const MONGODB_URI = process.env.MONGODB_URI
 const MONGODB_DB = process.env.MONGODB_DB
@@ -35,7 +35,7 @@ export async function connectToDatabase() {
     const opts = {
       useNewUrlParser: true,
       useUnifiedTopology: true
-    }
+    } as MongoClientOptions;
 
     cached.promise = MongoClient.connect(MONGODB_URI, opts).then((client) => {
       return {

@@ -1,4 +1,4 @@
-import React, { Ref } from 'react'
+import React, { Ref ,forwardRef} from 'react'
 import { IconButton } from '@chakra-ui/react';
 
 interface BaseProps {
@@ -8,7 +8,7 @@ interface BaseProps {
 }
 type OrNull<T> = T | null
 
-export const Button = React.forwardRef(
+const ButtonComponent = (
   (
     {
       className,
@@ -29,3 +29,4 @@ export const Button = React.forwardRef(
       icon={icon} />
   )
 )
+export const Button = forwardRef(ButtonComponent);

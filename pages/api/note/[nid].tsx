@@ -1,9 +1,14 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { connectToDatabase } from "@utils/database";
-import { getSession } from 'next-auth/client';
+import { getSession } from 'next-auth/react';
 import { ObjectId } from 'mongodb';
 import { rateLimit } from "@utils/helper";
-
+interface ObjectIdLike {
+    id: string | Buffer;
+    __id?: string;
+    toHexString(): string;
+}
+type MongoID = string | number | ObjectId | Buffer | ObjectIdLike;
 
 export default async (req:NextApiRequest, res:NextApiResponse)=> {
     const session = await getSession({ req });
@@ -18,46 +23,66 @@ export default async (req:NextApiRequest, res:NextApiResponse)=> {
         const { db } = await connectToDatabase();
         switch (method) {
             case 'GET':
-                const note = await db.collection("notes").findOne({
+                try {
+                   const note = await db.collection("notes").findOne({
                     $and: [{ email: session.user.email },
-                            {_id:ObjectId(nid)}
-                        ]
-                    }
-                )
-                return res.status(200).json(note);
+                            {_id:new ObjectId(nid as MongoID)}
+                            ]
+                        }
+                    )
+                    return res.status(200).json(note); 
+                }
+                catch (err) {
+                    return res.status(500).json(err);
+                }
             case 'PUT':
                 let putData;
                 if (Object.keys(req.body).length) {
-                    putData={ ...req.body, lastModified: new Date() } ;
+                    putData = { ...req.body, lastModified: new Date() };
                 }
                 else {
-                    return res.status(200).json({message:'Not modified'});
+                    return res.status(200).json({ message: 'Not modified' });
                 }
-                 const putResponse = await db.collection("notes").updateOne({
-                    $and: [{ email: session.user.email },
-                            {_id:ObjectId(nid)}
-                            ]
-                        },
-                     { $set:putData  },
-                );
-                return res.status(200).json(putResponse);
+                try {
+                    const putResponse = await db.collection("notes").updateOne({
+                        $and: [{ email: session.user.email },
+                        { _id: new ObjectId(nid as MongoID) }
+                        ]
+                    },
+                        { $set: putData },
+                    );
+                    return res.status(200).json(putResponse);
+                }
+                catch (err) {
+                    return res.status(500).json(err);
+                }
             case 'PATCH':
-                 const patchResponse = await db.collection("notes").updateOne({
-                    $and: [{ email: session.user.email },
-                            {_id:ObjectId(nid)}
-                            ]
-                        },
-                     { $push: req.body, $set: {lastModified:new Date()}},
-                );
-                return res.status(200).json(patchResponse);
+                try {
+                    const patchResponse = await db.collection("notes").updateOne({
+                        $and: [{ email: session.user.email },
+                        { _id: new ObjectId(nid as MongoID) }
+                        ]
+                    },
+                        { $push: req.body, $set: { lastModified: new Date() } },
+                    );
+                    return res.status(200).json(patchResponse);
+                }
+                catch (err) {
+                    return res.status(500).json(err);
+                }
             case 'DELETE':
-                 const deleteResponse = await db.collection("notes").deleteOne({
-                    $and: [{ email: session.user.email },
-                            {_id:ObjectId(nid)}
-                            ]
-                        }
-                );
-                return res.status(200).json(deleteResponse);
+                try {
+                    const deleteResponse = await db.collection("notes").deleteOne({
+                        $and: [{ email: session.user.email },
+                        { _id: new ObjectId(nid as MongoID) }
+                        ]
+                    }
+                    );
+                    return res.status(200).json(deleteResponse);
+                }
+                catch (err) {
+                    return res.status(500).json(err);
+                }
             default:
                 res.setHeader('Allow', ['GET','POST', 'PUT', 'DELETE'])
                 res.status(405).end(`Method ${method} Not Allowed`)

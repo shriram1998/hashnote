@@ -1,4 +1,3 @@
-import { MouseEvent } from "react";
 import {
     Tag,
     TagLabel,
@@ -17,7 +16,7 @@ export default function TagItem({ tagLabel,onCloseClick,color }:TagItemProps) {
             size="md"
             colorScheme={color}
         >
-            <TagLabel>{ tagLabel }</TagLabel>
+            <TagLabel>{`# ${tagLabel}` }</TagLabel>
             <TagCloseButton onClick={()=>onCloseClick(tagLabel) }/>
         </Tag>
     );

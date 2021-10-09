@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { connectToDatabase } from "@utils/database";
-import { getSession } from 'next-auth/client';
+import { getSession } from 'next-auth/react';
 import { rateLimit } from "@utils/helper";
 
 export default async (req:NextApiRequest, res:NextApiResponse)=> {
