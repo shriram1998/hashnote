@@ -97,7 +97,7 @@ const TextButton = ({ type, format, icon, label, char="" }) => {
   return (
     <Tooltip placement="bottom-end" fontSize="md"
       label={<TooltipJSX label={label} char={ char}/>}
-      openDelay={1500} closeDelay={1500} shouldWrapChildren>
+      openDelay={1200} closeDelay={300} shouldWrapChildren>
         <BtnType/>
     </Tooltip>
   );

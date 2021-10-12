@@ -1,8 +1,9 @@
 import { Flex } from '@chakra-ui/react';
-
-import SlateCode from "@components/SlateCode";
-import SlateText from "@components/SlateText";
-
+import dynamic from 'next/dynamic';
+// import SlateCode from "@components/SlateCode";
+// import SlateText from "@components/SlateText";
+const SlateCode = dynamic(() => import('@components/SlateCode'));
+const SlateText = dynamic(() => import('@components/SlateText'));
 interface EditorSwitchProps{
     type: string;
     value: object;

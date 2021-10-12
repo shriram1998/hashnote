@@ -6,7 +6,7 @@ import { connectToDatabase } from "@utils/database";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function NextAuthApi(req: NextApiRequest, res: NextApiResponse)  {
     const { db } = await connectToDatabase();
     NextAuth(req,res,{
         providers: [

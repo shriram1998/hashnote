@@ -7,7 +7,6 @@ import {
 } from '@chakra-ui/react';
 
 import { VscNote } from 'react-icons/vsc';
-import { BiHome } from 'react-icons/bi';
 
 import { useSession } from '@utils/useSession';
 import UserCard from '@components/UserCard';
@@ -68,24 +67,13 @@ export default function Header() {
           Hashnote
         </Text>
         </Flex>
-        {/* <InputGroup w="96" display={{ base: "none", md: "flex" }}>
-            <InputLeftElement color="gray.500" children={<FiSearch />} />
-            <Input placeholder="Search anything..." />
-        </InputGroup> */}
-        <HStack spacing={{ base: '0', md: '6' }}>
+        <HStack spacing={{ base: '2', md: '6' }}>
           <HStack
               as={'nav'}
               spacing={4}>
-            <NavLink label="Home" href="/" key="Home" icon={BiHome}/>
             {session ? <NavLink label="Notes" href="/note" key="Notes" icon={VscNote}/> : null}
             </HStack>
           <DarkModeSwitch />
-          {/* <IconButton
-            size="md"
-            variant="ghost"
-            aria-label="open menu"
-            icon={<FiBell />}
-          /> */}
           <UserCardX/>
         </HStack>
       </Flex>

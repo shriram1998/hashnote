@@ -22,7 +22,7 @@ import React, {useCallback, useMemo } from 'react'
 import { Slate, Editable, withReact,ReactEditor } from 'slate-react'
 import { Text, createEditor } from 'slate'
 import { withHistory } from 'slate-history'
-import { css } from '@emotion/css'
+import { chakra } from '@chakra-ui/react';
 
 export default function SlateCode({value,onValueChange,language}) {
     const renderLeaf = useCallback(props => <Leaf {...props} />, [])
@@ -104,53 +104,26 @@ export default function SlateCode({value,onValueChange,language}) {
     }
     // different token types, styles found on Prismjs website
     const Leaf = ({ attributes, children, leaf }) => {
-    return (
-        <span
-        {...attributes}
-        className={css`
-                font-family: monospace;
-            ${leaf.comment &&
-            css`
-                color: slategray;
-            `} 
-            ${(leaf.operator || leaf.url) &&
-            css`
-                color: #9a6e3a;
-            `}
-            ${leaf.keyword &&
-            css`
-                color: #07a;
-            `}
-            ${(leaf.variable || leaf.regex) &&
-            css`
-                color: #e90;
-            `}
-            ${(leaf.number ||
+      return (
+        <chakra.span
+          {...attributes}
+          fontFamily="monospace"
+          color={leaf.comment? "slategray": 
+            (leaf.operator || leaf.url)? "#9a6e3a":
+            leaf.keyword?"#07a":
+            (leaf.variable || leaf.regex)?"#e90":
+            (leaf.number ||
             leaf.boolean ||
             leaf.tag ||
             leaf.constant ||
             leaf.symbol ||
             leaf['attr-name'] ||
-            leaf.selector) &&
-            css`
-                color: #905;
-            `}
-            ${leaf.punctuation &&
-            css`
-                color: #999;
-            `}
-            ${(leaf.string || leaf.char) &&
-            css`
-                color: #690;
-            `}
-            ${(leaf.function || leaf['class-name']) &&
-            css`
-                color: #dd4a68;
-            `}
-            `}
+            leaf.selector)?"#905":
+            (leaf.string || leaf.char)?"#690":
+            (leaf.function || leaf['class-name'])?"#dd4a68":""}
         >
         {children}
-        </span>
+        </chakra.span>
     )
 }
 

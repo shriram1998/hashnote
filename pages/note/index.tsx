@@ -1,9 +1,9 @@
-import { useEffect,useState,ReactElement } from 'react';
+import { useEffect,useState,useRef,ReactElement } from 'react';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 
 import {
-  Flex, Spacer, VStack, Wrap,Box,
+  Flex, Spacer, VStack,Box,
   Text,Icon,useColorMode,
 } from '@chakra-ui/react';
 import { useQuery } from 'react-query';
@@ -19,10 +19,12 @@ import { isSubset, objectCompare } from '@utils/helper';
 import { NoNote } from '@utils/customSVG';
 
 import FilterTags from '@components/FilterTags';
-import CreateNote from '@components/CreateNote';
-import SkeletonIndex from '@components/SkeletonIndex';
-import SlateThumbnail from '@components/SlateThumbnail';
-
+// import CreateNote from '@components/CreateNote';
+// import SkeletonIndex from '@components/SkeletonIndex';
+// import SlateThumbnail from '@components/SlateThumbnail';
+const CreateNote = dynamic(() => import('@components/CreateNote'));
+const SkeletonIndex = dynamic(() => import('@components/SkeletonIndex'));
+const SlateThumbnail = dynamic(() => import('@components/SlateThumbnail'));
 const fetchNotes = async () => {
   const notes = await axios.get('/api/note');
   return notes;
@@ -33,21 +35,30 @@ export default function NotesIndex() {
   const router = useRouter();
   const { isLoading, isError, data, error } = useQuery("note", fetchNotes);
   const { colorMode } = useColorMode();
-  
+  const isMounted = useRef(false);
   const [tagQuery, setTagQuery] = useState({ tags: [], type: [], fav: false });
 
+  let allTags = [];
+  let allType = [];
+  let favFlag = false;
+  let thumbnailJSX: ReactElement;
+  let nullJSX: ReactElement;
   useEffect(() => {
-    let selectedTags = router.query.tags;
-    let selectedType = router.query.type;
-    let selectedFav = router.query.fav;
-    setTagQuery({
-      tags: selectedTags ? (selectedTags as string).split(",") :
-        [],
-      type:selectedType?
-        [(selectedType as string).split(',').pop()] :
-        [],
-      fav:selectedFav==='true'?true:false,
-    });
+    if (isMounted.current) {
+      let selectedTags = router.query.tags;
+      let selectedType = router.query.type;
+      let selectedFav = router.query.fav;
+      setTagQuery({
+        tags: selectedTags ? (selectedTags as string).split(",") :
+          [],
+        type:selectedType?
+          [(selectedType as string).split(',').pop()] :
+          [],
+        fav:selectedFav==='true'?true:false,
+      });
+    } else {
+      isMounted.current = true;
+    }
   }, [router.query]);
 
   const handleFav = () => {
@@ -89,40 +100,34 @@ export default function NotesIndex() {
         </Flex>
       );
     }
-    let allTags = [];
-    let allType = [];
-    let favFlag = false;
-    let thumbnailJSX: ReactElement;
-    let nullJSX: ReactElement;
-
+    let filteredData = data.data;
     if (data.data.length) {
-      let filteredData = data.data.filter(note => {
-        return (
-          isSubset(note.tags, tagQuery.tags) &&
-          (tagQuery.type.length === 0 || note.type === tagQuery.type[0].toLowerCase()) &&
-          (tagQuery.fav ? note.favourite === true : true)
-        );
-      });
+      if(Object.keys(router.query).length){
+        filteredData = data.data.filter(note => {
+          return (
+            isSubset(note.tags, tagQuery.tags) &&
+            (tagQuery.type.length === 0 || note.type === tagQuery.type[0].toLowerCase()) &&
+            (tagQuery.fav ? note.favourite === true : true)
+          );
+        });
+      }
       if (!filteredData.length) {
         setTagQuery({ tags: [], type: [], fav: false });
         router.push('/note');
-        }
-        filteredData = filteredData.sort((a, b) => objectCompare(a, b, 'lastModified'));
-        allTags = Array.from(new Set(filteredData.map(note => note.tags).flat()));
+      }
+      filteredData = filteredData.sort((a, b) => objectCompare(a, b, 'lastModified'));
+      allTags = Array.from(new Set(filteredData.map(note => note.tags).flat()));
 
-        let textFlag = filteredData.some(note => note.type === 'text');
-        let codeFlag = filteredData.some(note => note.type === 'code');
-        allType = [];
-        if (textFlag) { allType.push('Text') }
-        if (codeFlag) { allType.push('Code') }
-      
-        favFlag = filteredData.some(note => note.favourite === true);
+      filteredData.some(note => note.type === 'text')?allType.push('Text'):null;
+      filteredData.some(note => note.type === 'code')?allType.push('Code'):null;
+    
+      favFlag = filteredData.some(note => note.favourite === true);
 
-        thumbnailJSX = filteredData.map(data => {
-          return (
-            <SlateThumbnail key={data._id} data={data} />
-          );
-        });
+      thumbnailJSX = filteredData.map(data => {
+        return (
+          <SlateThumbnail key={data._id} data={data} />
+        );
+      });
       }
       else {
         nullJSX = (
@@ -154,9 +159,14 @@ export default function NotesIndex() {
           </Box>
         </Flex>
         {data.data.length === 0 ? nullJSX : (
-          <Wrap spacing="35px" mt="10" mx="2">
+          <Flex >
+                <Flex flexWrap="wrap" justifyContent="center" w="100%"
+                    mx={{ base: "3", sm: "4", lg: "5" }}
+                    p={{  base: "3", sm: "4", lg: "5"  }}
+                >
             {thumbnailJSX}
-          </Wrap>
+            </Flex>
+          </Flex>
         )}
       </>
     );

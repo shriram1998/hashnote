@@ -23,5 +23,17 @@ export function objectCompare( a:Object, b:Object ,key:(string | number)) {
   return 0;
 }
 export const rateLimit = require("lambda-rate-limiter")({
-  interval: 2 * 1000
+  interval: 1 * 1000 //Req per unit mentioned here is the threshold
 }).check;
+
+export const debounce = (func, delay=500) => {
+    let timer;
+    return function() {
+      let self = this;
+      let args = arguments;
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        func.apply(self, args)
+      }, delay)
+    }
+  }

@@ -18,7 +18,7 @@ const seed = {
     "favourite": false,
     "__v":0
 }
-export default async (req:NextApiRequest, res:NextApiResponse)=> {
+export default async function CreateApi(req:NextApiRequest, res:NextApiResponse) {
     const session = await getSession({ req });
     if (session) {
         try {

@@ -27,14 +27,14 @@ export default function FilterTags({ tags,selected,type=''}:FilterProps) {
             router.push(
             {
                 query: { ...router.query, [type]: selectedTags.join(',') }
-            });
+            },undefined,{shallow:true});
         } else {
             let clone = Object.assign({}, router.query);
             delete clone[type];
             router.push(
                 {
                     query: clone,
-                });
+                },undefined,{shallow:true});
         } 
     }, [selectedTags]);
 

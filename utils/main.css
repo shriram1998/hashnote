@@ -3,7 +3,7 @@ div[data-slate-editor="true"] {
   width: 100%;
 }
 div[data-slate-editor="true"] {
-  height: 74vh;
+  height: 73vh;
   overflow-x: auto;
   overflow-y: visible;
 }
@@ -32,7 +32,9 @@ div[data-slate-editor="true"] > ul > li:before {
   padding-right: 0.5em;
   align-items: flex-end;
 }
-
+pre[class="truncate"] {
+  overflow: hidden;
+}
 @media only screen and (max-width: 1200px) {
   /*Tablets [601px -> 1200px]*/
   div[data-slate-editor="true"] > pre:before {

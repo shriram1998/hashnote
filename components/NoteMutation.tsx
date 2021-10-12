@@ -6,7 +6,8 @@ interface NoteProps {
     value?: string,
     favourite?: boolean,
     title?:string,
-    language?:string,
+    language?: string,
+    thumbnailText?:string|string[]
 }
 interface AddTagProps {
     newTag: string,
@@ -23,7 +24,8 @@ export async function deleteNote({ postid }: {postid:string}) {
     return response;
 }
 
-export async function putNote({ postid, ...rest }: NoteProps) {
+export async function putNote(props: NoteProps) {
+    const { postid, ...rest } = props;
     const response = await axios.put(`/api/note/${postid}`, rest);
     return response;
 }

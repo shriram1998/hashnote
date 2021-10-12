@@ -1,27 +1,30 @@
 import { KeyboardEvent } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import { useState, useEffect,useRef } from 'react';
+import { useState, useEffect,useRef,useMemo,useCallback } from 'react';
 import { BiShow,BiHide } from 'react-icons/bi';
 import { BsTrash } from 'react-icons/bs';
 import { AiFillStar,AiOutlineStar } from 'react-icons/ai';
+import dynamic from 'next/dynamic';
 
 import {
     Flex,Box,
     Icon, Text, Tooltip,
     Button,
-    useToast,useColorMode,
+    useColorMode,
 } from '@chakra-ui/react';
 
 import SaveButton from '@components/SaveButton';
-import Popover from '@components/Popover';
+// import Popover from '@components/Popover';
 import EditorSwitch from '@components/EditorSwitch';
 import TagMenu from '@components/Menu';
-import TitleInput from '@components/TitleInput';
+// import TitleInput from '@components/TitleInput';
 import SelectComponent from '@components/SelectComponent';
-import { putNote,patchTag,deleteNote} from '@components/NoteMutation';
+import useNoteMutation from '@components/useNoteMutation';
 
-import { serialize } from "@utils/helper";
+const Popover = dynamic(() => import('@components/Popover'));
+const TitleInput = dynamic(() => import('@components/TitleInput'));
+
+import { debounce, serialize } from "@utils/helper";
 import { PRISM_EXTENSIONS } from '@utils/constants';
 
 const seed = {
@@ -38,56 +41,43 @@ export default function SlateEditor({ data }) {
     let [isChanged, _setIsChanged] = useState<boolean>(false);
     const [language, setLanguage] = useState<string>(data.language);
     const [save, setSave] = useState<string>("Saved");
-
+    const [autoSave, setAutoSave] = useState<boolean>(false);
     const isChangedRef = useRef(isChanged);
+    const isMounted = useRef(false);
 
     const router = useRouter();
-    const queryClient = useQueryClient();
-    const toast = useToast();
     const { colorMode } = useColorMode();
+    const {patchTagMutation,putNoteMutation,delteNoteMutation} = useNoteMutation();
+    const mutations = [patchTagMutation, putNoteMutation];
 
+    const debouncedTextCompare: (val: object) => void = useCallback(debounce((val: object) =>
+        textCompare(val), 2000), [value]);
     const setIsChanged = data => {
+        /*Ref is used since beforeUnload listener cannot access 
+        react state values but can access dom using ref*/
         isChangedRef.current = data;
         _setIsChanged(data);
     }
-    let initialValue:string = serialize(value); //used for comparison on input change
+    let initialValue: string = useMemo(() => serialize(value), [data.value]) ;
     let postid: string = data._id;
-
-    const patchTagMutation = useMutation(patchTag, {
-        onSuccess: () => {
-            queryClient.invalidateQueries('note');
-        },
-    });
-    const putNoteMutation = useMutation(putNote, {
-        onSuccess: () => {
-            queryClient.invalidateQueries('note');
-        },
-    });
-    const delteNoteMutation = useMutation(deleteNote, {
-        onSuccess: newNote => {
-            console.log(newNote);
-            queryClient.invalidateQueries('note');
-            toast({
-                title: "Item deleted successfully",
-                status: "error",
-                isClosable: true,
-            })
-        },
-    });
-    const mutations = [patchTagMutation, putNoteMutation];
+    
 
     useEffect(() => {
-        let muTextArr:Array<string> = mutations.map(mutation => mutation.isLoading ? ("Saving") :
+        if (isMounted.current) {
+            let muTextArr:Array<string> = mutations.map(mutation => mutation.isLoading ? ("Saving") :
             mutation.isError ? "Error" : ""
-        );
-        let loadText:string = muTextArr.filter(x => x !== null)[0];
-        if (loadText) {
-            setSave(loadText);
-        } else if (isChanged) {
-            setSave('Save');
-        }
-        else {
-            setSave("Saved");
+            );
+            let loadText:string = muTextArr.filter(x => x !== null)[0];
+            if (loadText) {
+                setSave(loadText);
+            } else if (isChanged) {
+                setSave('Save');
+            }
+            else {
+                setSave("Saved");
+            }
+        } else {
+            isMounted.current = true;
         }
     }, [mutations]);
     
@@ -102,10 +92,18 @@ export default function SlateEditor({ data }) {
         return () => {
             window.removeEventListener('beforeunload', beforeUnloadListener);
         }
-    }, [])
+    }, []);
+    useEffect(() => {
+        if (autoSave === true) {
+            handleSave();
+        }
+    }, [autoSave])
     const handleInputChange = (val:object,isChanged:boolean) => {
         setValue(val);
         setIsChanged(isChanged);
+        debouncedTextCompare(val);
+    }
+    const textCompare = (val: object) => {
         let worker = new window.Worker("/LCS-worker.js");
         let newValue:string = serialize(val);
         worker.postMessage({ oldStr:initialValue, newStr:newValue });
@@ -113,9 +111,8 @@ export default function SlateEditor({ data }) {
         worker.onmessage = (e) => {
             let { changes } = e.data;
             if (changes >= 15) {
-                putNoteMutation.mutate({ value: JSON.stringify(val), postid });
-                initialValue = newValue;
-                setIsChanged(false);
+                setAutoSave(true);
+                setAutoSave(false);
             }
             worker.terminate();
         }
@@ -148,6 +145,16 @@ export default function SlateEditor({ data }) {
     const handleSave = () => {
         putNoteMutation.mutate({ value: JSON.stringify(value), postid });
         setIsChanged(false);
+        let worker = new window.Worker("/Thumbnail-worker.js");
+        let newValue = serialize(value);
+        worker.postMessage({ value:newValue,type:data.type });
+        worker.onerror = (err) => console.log(err);
+        worker.onmessage = (e) => {
+            let { thumbnailText } = e.data;
+            // console.log(thumbnailText);
+            putNoteMutation.mutate({ thumbnailText, postid });
+            worker.terminate();
+        }
     }
     
     const beforeUnloadListener = (event) => {

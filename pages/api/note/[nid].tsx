@@ -10,7 +10,7 @@ interface ObjectIdLike {
 }
 type MongoID = string | number | ObjectId | Buffer | ObjectIdLike;
 
-export default async (req:NextApiRequest, res:NextApiResponse)=> {
+export default async function NoteIndivApi(req:NextApiRequest, res:NextApiResponse) {
     const session = await getSession({ req });
     if (session) {
         try {
