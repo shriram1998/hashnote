@@ -3,7 +3,7 @@ import {
     MenuItem,
     MenuList,
 } from '@chakra-ui/react';
-import { signOut } from 'next-auth/react';
+import { signOut } from 'next-auth/client';
 import {useRouter} from 'next/router';
 
 export default function ProfileDropdown() {

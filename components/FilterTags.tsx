@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react';
 import {
     FiChevronDown,
-} from 'react-icons/fi';
+} from '@react-icons/all-files/fi/FiChevronDown';
 
 import { capitalizeFirstLetter } from '@utils/helper';
 

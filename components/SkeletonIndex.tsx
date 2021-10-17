@@ -1,4 +1,4 @@
-import { SkeletonText, Box, Wrap, useColorMode } from "@chakra-ui/react";
+import { SkeletonText, Box,Flex, useColorMode } from "@chakra-ui/react";
 
 import useIsSsr from "@utils/useIsSSR";
 
@@ -14,7 +14,7 @@ export default function SkeletonIndex() {
     const screenHeight = window.innerHeight;
     const row = Math.floor(screenHeight / 500);
     const col = Math.floor(screenWidth / 300);
-    const total = row * col >= 10 ? 10 : row * col;
+    const total = row * col >= 8 ? 8 : row * col;
 
     let skeletonJSX = (
         <>
@@ -30,7 +30,7 @@ export default function SkeletonIndex() {
                             h="320px"
                             py="4"
                             px="5"
-                            mt="15"
+                            m="25px"
                             bg={colorMode === 'light' ? "gray.50" : "gray.900"}
                             shadow="lg"
                             rounded="lg"
@@ -43,8 +43,13 @@ export default function SkeletonIndex() {
             }
         </>);
     return (
-        <Wrap spacing="35px" mt="10" mx="2">
-            {skeletonJSX}
-        </Wrap>
+        <Flex >
+            <Flex flexWrap="wrap" justifyContent="center" w="100%" mt="20"
+                mx={{ base: "3", sm: "4", lg: "5" }}
+                p={{  base: "3", sm: "4", lg: "5"  }}
+            >
+                {skeletonJSX}
+            </Flex>
+        </Flex>
     );
 }

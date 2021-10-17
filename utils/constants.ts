@@ -1,5 +1,5 @@
 export const PRISM_EXTENSIONS = {
-    'py': 'Python',
+    'python': 'Python',
     'go':'Go',
     'js': 'Javascript',
     'java': 'Java',

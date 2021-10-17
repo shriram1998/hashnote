@@ -1,9 +1,13 @@
 import { KeyboardEvent } from 'react';
 import { useRouter } from 'next/router';
 import { useState, useEffect,useRef,useMemo,useCallback } from 'react';
-import { BiShow,BiHide } from 'react-icons/bi';
-import { BsTrash } from 'react-icons/bs';
-import { AiFillStar,AiOutlineStar } from 'react-icons/ai';
+import { BiShow } from '@react-icons/all-files/bi/BiShow';
+import { BiHide } from '@react-icons/all-files/bi/BiHide';
+
+import { BsTrash } from '@react-icons/all-files/bs/BsTrash';
+import { AiFillStar } from '@react-icons/all-files/ai/AiFillStar';
+import {AiOutlineStar } from '@react-icons/all-files/ai/AiOutlineStar';
+
 import dynamic from 'next/dynamic';
 
 import {
@@ -14,17 +18,15 @@ import {
 } from '@chakra-ui/react';
 
 import SaveButton from '@components/SaveButton';
-// import Popover from '@components/Popover';
 import EditorSwitch from '@components/EditorSwitch';
 import TagMenu from '@components/Menu';
-// import TitleInput from '@components/TitleInput';
 import SelectComponent from '@components/SelectComponent';
 import useNoteMutation from '@components/useNoteMutation';
 
 const Popover = dynamic(() => import('@components/Popover'));
 const TitleInput = dynamic(() => import('@components/TitleInput'));
 
-import { debounce, serialize } from "@utils/helper";
+import {  debounce,serialize } from "@utils/helper";
 import { PRISM_EXTENSIONS } from '@utils/constants';
 
 const seed = {
@@ -33,6 +35,7 @@ const seed = {
         { text: '' },
     ]
 };
+
 export default function SlateEditor({ data }) {
     const [value, setValue] = useState<object>(data.value?JSON.parse(data.value):seed);
     const [tags, setTags] = useState<Array<string>>(data.tags);
@@ -50,8 +53,7 @@ export default function SlateEditor({ data }) {
     const {patchTagMutation,putNoteMutation,delteNoteMutation} = useNoteMutation();
     const mutations = [patchTagMutation, putNoteMutation];
 
-    const debouncedTextCompare: (val: object) => void = useCallback(debounce((val: object) =>
-        textCompare(val), 2000), [value]);
+    
     const setIsChanged = data => {
         /*Ref is used since beforeUnload listener cannot access 
         react state values but can access dom using ref*/
@@ -101,7 +103,7 @@ export default function SlateEditor({ data }) {
     const handleInputChange = (val:object,isChanged:boolean) => {
         setValue(val);
         setIsChanged(isChanged);
-        debouncedTextCompare(val);
+        debouncedTextCompare(value);
     }
     const textCompare = (val: object) => {
         let worker = new window.Worker("/LCS-worker.js");
@@ -117,6 +119,8 @@ export default function SlateEditor({ data }) {
             worker.terminate();
         }
     }
+    const debouncedTextCompare:(val:object)=>void= useCallback(debounce((val)=>textCompare(val), 2000), []);
+
     const handleFav=()=> {
         setFav(!fav);
         putNoteMutation.mutate({ favourite: !data.favourite, postid });

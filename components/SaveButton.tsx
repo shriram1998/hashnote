@@ -1,8 +1,8 @@
 import {Button} from '@chakra-ui/react';
 import {
     FiSave
-} from 'react-icons/fi';
-import { BsCheck } from 'react-icons/bs';
+} from '@react-icons/all-files/fi/FiSave';
+import { BsCheck } from '@react-icons/all-files/bs/BsCheck';
 
 export default function SaveButton({ state,onSave,...rest }) {
     switch (state) {

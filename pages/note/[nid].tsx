@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import SlateEditor from '@components/SlateEditor';
 import SkeletonComp from '@components/Skeleton';
 import axios from '@utils/axios';
-import { useSession } from '@utils/useSession';
+import { useSession } from 'next-auth/client'
 
 export default function SingleNote() {
   const router = useRouter();

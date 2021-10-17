@@ -7,11 +7,18 @@ import {
 } from 'slate';
 import { withHistory } from 'slate-history';
 
-import { GoBold } from 'react-icons/go';
-import { FiItalic, FiUnderline } from 'react-icons/fi';
-import { AiOutlineOrderedList, AiOutlineUnorderedList } from 'react-icons/ai';
-import { BsCodeSlash } from 'react-icons/bs';
-import { MdLooksOne, MdLooksTwo,MdFormatQuote } from 'react-icons/md';
+import { GoBold } from '@react-icons/all-files/go/GoBold';
+import { FiItalic } from '@react-icons/all-files/fi/FiItalic';
+import { FiUnderline } from '@react-icons/all-files/fi/FiUnderline';
+
+import { AiOutlineOrderedList } from '@react-icons/all-files/ai/AiOutlineOrderedList';
+import { AiOutlineUnorderedList } from '@react-icons/all-files/ai/AiOutlineUnorderedList';
+
+import { BsCodeSlash } from '@react-icons/all-files/bs/BsCodeSlash';
+import { MdLooksOne} from '@react-icons/all-files/md/MdLooksOne';
+import { MdLooksTwo } from '@react-icons/all-files/md/MdLooksTwo';
+import { MdFormatQuote } from '@react-icons/all-files/md/MdFormatQuote';
+
 
 import { Heading, Text, Wrap, Tooltip } from '@chakra-ui/react';
 

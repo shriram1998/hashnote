@@ -1,4 +1,4 @@
-import { signIn } from 'next-auth/react';
+import { signIn,useSession } from 'next-auth/client';
 
 import {
   Flex,HStack,Stack,
@@ -6,9 +6,9 @@ import {
   Text, SkeletonCircle, SkeletonText,
 } from '@chakra-ui/react';
 
-import { VscNote } from 'react-icons/vsc';
+import { VscNote } from '@react-icons/all-files/vsc/VscNote';
 
-import { useSession } from '@utils/useSession';
+
 import UserCard from '@components/UserCard';
 import DarkModeSwitch from '@components/DarkModeSwitch';
 import NavLink from '@components/NavLink';
@@ -18,13 +18,13 @@ export default function Header() {
   
   const UserCardX = () => {
     if (session) {
-      return <UserCard {...session.user} />;
+      return <UserCard name={session.user.name} image={session.user.image} />;
     }
     else if (loading) {
       return (
-        <Stack w="7em">
+        <Stack w={{ base: "2em",md: "7em" }}>
           <SkeletonCircle size="5" />
-          <SkeletonText noOfLines={1} display="inline-flex"/>
+          <SkeletonText display={{base:'none',md:'inline-flex'}} noOfLines={1}/>
         </Stack>
       )
     }
@@ -33,7 +33,7 @@ export default function Header() {
         <Button
           colorScheme="blue"
           onClick={() => { signIn() }}>
-          Login/Register
+          Log in
         </Button>
       )
     }

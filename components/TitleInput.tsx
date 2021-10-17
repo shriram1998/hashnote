@@ -4,8 +4,11 @@ import {
     Editable,EditablePreview,EditableInput,useEditableControls
 } from "@chakra-ui/react"
 import { useState } from 'react';
-import { AiOutlineCheck, AiOutlineClose } from 'react-icons/ai'
-import {BiEdit} from 'react-icons/bi'
+import { AiOutlineCheck } from '@react-icons/all-files/ai/AiOutlineCheck';
+import { AiOutlineClose } from '@react-icons/all-files/ai/AiOutlineClose';
+
+import { BiEdit } from '@react-icons/all-files/bi/BiEdit';
+
 export default function TitleInput({ val = "",onSubmit,...rest }) {
     const [value, setValue] = useState(val);
   function EditableControls() {

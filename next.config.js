@@ -8,12 +8,11 @@ module.exports = withPWA(withBundleAnalyzer({
     dest: 'public',
     disable: process.env.NODE_ENV === 'development'
   },
-  distDir: 'build',
-  webpack: (config, options) => {
+  webpack: (config) => {
     // Important: return the modified config
-    if (!options.dev) {
-      return {
+    return {
         ...config,
+        mode: 'production',
         optimization: {
           ...config.optimization,
           splitChunks: {
@@ -21,9 +20,6 @@ module.exports = withPWA(withBundleAnalyzer({
           },
         },
       }
-    } else {
-      return config;
-    }
   }
 }),
 );

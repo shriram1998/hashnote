@@ -4,12 +4,12 @@ import {
 } from '@chakra-ui/react';
 import { forwardRef, ReactElement, ReactNode } from 'react';
 
-import { MdDevices } from 'react-icons/md';
-import { BsCodeSlash } from 'react-icons/bs';
-import { FiFilter } from 'react-icons/fi';
-import { GrDocumentTest } from 'react-icons/gr';
-import { HiOutlineUserGroup } from 'react-icons/hi';
-import { GiSpeedometer } from 'react-icons/gi';
+import { MdDevices } from '@react-icons/all-files/md/MdDevices';
+import { BsCodeSlash } from '@react-icons/all-files/bs/BsCodeSlash';
+import { FiFilter } from '@react-icons/all-files/fi/FiFilter';
+import { GrDocumentTest } from '@react-icons/all-files/gr/GrDocumentTest';
+import { HiOutlineUserGroup } from '@react-icons/all-files/hi/HiOutlineUserGroup';
+import { GiSpeedometer } from '@react-icons/all-files/gi/GiSpeedometer';
 
 interface FeatureProps{
   title: string;
@@ -54,7 +54,7 @@ const FeatureComponent = (( props,ref) => {
         </chakra.h3>
         <chakra.p
           fontSize={{ base: "md", md: "lg" }}
-          color={useColorModeValue("gray.500", "gray.400")}
+          color={useColorModeValue("gray.700", "gray.200")}
         >
           {props.children}
         </chakra.p>
@@ -88,7 +88,7 @@ const FeatureComponent = (( props,ref) => {
             maxW="2xl"
             fontSize="xl"
             mx={{ lg: "auto" }}
-            color={useColorModeValue("gray.500", "gray.400")}
+            color={useColorModeValue("gray.700", "gray.200")}
           >
             Reasons why Hashnote could be the perfect notes app for you
           </chakra.p>

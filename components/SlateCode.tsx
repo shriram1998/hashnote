@@ -1,4 +1,4 @@
-import Prism from 'prismjs'
+import {tokenize,languages,util} from 'prismjs'
 import 'prismjs/components/prism-python'
 import 'prismjs/components/prism-go'
 import 'prismjs/components/prism-javascript'
@@ -11,14 +11,14 @@ import 'prismjs/components/prism-dart'
 import 'prismjs/components/prism-ruby'
 import 'prismjs/components/prism-scala'
 import 'prismjs/components/prism-kotlin'
-import 'prismjs/components/prism-css'
+import 'prismjs/components/prism-css'  
 import 'prismjs/components/prism-sql'
 import 'prismjs/components/prism-php'
 import 'prismjs/components/prism-powershell'
 import 'prismjs/components/prism-batch'
 import 'prismjs/components/prism-bash'
 
-import React, {useCallback, useMemo } from 'react'
+import {useCallback, useMemo } from 'react'
 import { Slate, Editable, withReact,ReactEditor } from 'slate-react'
 import { Text, createEditor } from 'slate'
 import { withHistory } from 'slate-history'
@@ -35,7 +35,7 @@ export default function SlateCode({value,onValueChange,language}) {
         if (!Text.isText(node)) {
             return ranges
         }
-        const tokens = Prism.tokenize(node.text, Prism.languages[language])
+        const tokens =tokenize(node.text,languages[language])
         let start = 0
 
         for (const token of tokens) {
@@ -129,20 +129,20 @@ export default function SlateCode({value,onValueChange,language}) {
 
 // modifications and additions to prism library
 
-Prism.languages.python = Prism.languages.extend('python', {})
-Prism.languages.insertBefore('python', 'prolog', {
+languages.python =languages.extend('python', {})
+languages.insertBefore('python', 'prolog', {
   comment: { pattern: /##[^\n]*/, alias: 'comment' },
 })
-Prism.languages.javascript = Prism.languages.extend('javascript', {})
-Prism.languages.insertBefore('javascript', 'prolog', {
+languages.javascript =languages.extend('javascript', {})
+languages.insertBefore('javascript', 'prolog', {
   comment: { pattern: /\/\/[^\n]*/, alias: 'comment' },
 })
-Prism.languages.html = Prism.languages.extend('html', {})
-Prism.languages.insertBefore('html', 'prolog', {
+languages.html =languages.extend('html', {})
+languages.insertBefore('html', 'prolog', {
   comment: { pattern: /<!--[^\n]*-->/, alias: 'comment' },
 })
-Prism.languages.markdown = Prism.languages.extend('markup', {})
-Prism.languages.insertBefore('markdown', 'prolog', {
+languages.markdown =languages.extend('markup', {})
+languages.insertBefore('markdown', 'prolog', {
   blockquote: { pattern: /^>(?:[\t ]*>)*/m, alias: 'punctuation' },
   code: [
     { pattern: /^(?: {4}|\t).+/m, alias: 'keyword' },
@@ -198,13 +198,13 @@ Prism.languages.insertBefore('markdown', 'prolog', {
     },
   },
 })
-Prism.languages.markdown.bold.inside.url = Prism.util.clone(
-  Prism.languages.markdown.url
+languages.markdown.bold.inside.url =util.clone(
+ languages.markdown.url
 )
-Prism.languages.markdown.italic.inside.url = Prism.util.clone(
-  Prism.languages.markdown.url
+languages.markdown.italic.inside.url =util.clone(
+ languages.markdown.url
 )
-Prism.languages.markdown.bold.inside.italic = Prism.util.clone(
-  Prism.languages.markdown.italic
+languages.markdown.bold.inside.italic =util.clone(
+ languages.markdown.italic
 )
-Prism.languages.markdown.italic.inside.bold = Prism.util.clone(Prism.languages.markdown.bold); // prettier-ignore
+languages.markdown.italic.inside.bold =util.clone(languages.markdown.bold); // prettier-ignore

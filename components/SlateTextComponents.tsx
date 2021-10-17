@@ -1,9 +1,9 @@
-import React, { Ref ,forwardRef} from 'react'
+import { Ref ,forwardRef,ReactElement} from 'react'
 import { IconButton } from '@chakra-ui/react';
 
 interface BaseProps {
   className: string,
-  icon: React.ReactElement;
+  icon: ReactElement;
   [key: string]: unknown
 }
 type OrNull<T> = T | null

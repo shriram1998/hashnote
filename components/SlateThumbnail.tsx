@@ -5,8 +5,8 @@ import {
     useColorModeValue, useColorMode,
 } from '@chakra-ui/react';
 
-import { BsCodeSlash } from "react-icons/bs";
-import { CgList } from "react-icons/cg";
+import { BsCodeSlash } from "@react-icons/all-files/bs/BsCodeSlash";
+import { CgList } from "@react-icons/all-files/cg/CgList";
 import { MONTHS } from "@utils/constants";
 
 export default function SlateThumbnail({ data }) {
@@ -51,7 +51,7 @@ export default function SlateThumbnail({ data }) {
                 h="20em"
                 py={4}
                 px={5}
-                m="4"
+                m="35px"
                 bg={useColorModeValue("gray.50", "gray.800")}
                 shadow="lg"
                 rounded="lg"

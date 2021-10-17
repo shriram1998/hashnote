@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { connectToDatabase } from "@utils/database";
-import { getSession } from 'next-auth/react';
+import { getSession } from 'next-auth/client';
 import { ObjectId } from 'mongodb';
 import { rateLimit } from "@utils/helper";
 interface ObjectIdLike {

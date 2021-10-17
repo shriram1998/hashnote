@@ -11,10 +11,10 @@ import {
 } from '@chakra-ui/react';
 import {
   FiChevronDown,
-} from 'react-icons/fi';
+} from '@react-icons/all-files/fi/FiChevronDown';
 
 const ProfileDropdown = dynamic(() => import('./ProfileDropdown'));
-export default function UserCard({name,image}) {
+export default function UserCard({ name, image }: {name:string,image:string}) {
     return (
         <Flex alignItems={'center'}>
           <Menu isLazy>

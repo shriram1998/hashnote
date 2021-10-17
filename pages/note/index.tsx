@@ -7,24 +7,29 @@ import {
   Text,Icon,useColorMode,
 } from '@chakra-ui/react';
 import { useQuery } from 'react-query';
+import { useSession } from 'next-auth/client'
 
 import {
     FiFilter,
-} from 'react-icons/fi';
-import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
+} from '@react-icons/all-files/fi/FiFilter';
+import { AiFillStar } from '@react-icons/all-files/ai/AiFillStar';
+import { AiOutlineStar } from '@react-icons/all-files/ai/AiOutlineStar';
+
 
 import axios from '@utils/axios';
-import { useSession } from '@utils/useSession';
 import { isSubset, objectCompare } from '@utils/helper';
-import { NoNote } from '@utils/customSVG';
 
 import FilterTags from '@components/FilterTags';
 // import CreateNote from '@components/CreateNote';
 // import SkeletonIndex from '@components/SkeletonIndex';
 // import SlateThumbnail from '@components/SlateThumbnail';
+
 const CreateNote = dynamic(() => import('@components/CreateNote'));
 const SkeletonIndex = dynamic(() => import('@components/SkeletonIndex'));
 const SlateThumbnail = dynamic(() => import('@components/SlateThumbnail'));
+const NoteChakra = dynamic(() => import('@utils/customSVG').then((mod) => mod.NoteChakra));
+const NoNote = dynamic(() => import('@utils/customSVG').then((mod) => mod.NoNote));
+
 const fetchNotes = async () => {
   const notes = await axios.get('/api/note');
   return notes;
@@ -134,7 +139,7 @@ export default function NotesIndex() {
           <Flex w="100%" m="4" justifyContent="center">
             <VStack>
               <Text fontSize="2xl">No notes found. Add them to get started.</Text>
-              <NoNote opacity="0.15" />
+              <NoNote/>
             </VStack>
           </Flex>
         );
@@ -173,19 +178,22 @@ export default function NotesIndex() {
   }
   else if (loading) {
     return (
-        <>
+        <Flex height="90vh" overflow="hidden">
           <SkeletonIndex/>
-        </>
+        </Flex>
       );
   }
   else {
-      return (<Flex
-        h="100vh"
+      return (<VStack
         justify="center"
-        fontSize="24"
+        overflow="hidden"
+        height="90vh"
       >
-        Please login to view and add notes
-      </Flex> 
+        <Text fontSize="26" textAlign="center" mb="2">
+          Please login to view and add notes
+        </Text>
+        <NoteChakra/>
+      </VStack> 
       );
     }
 }

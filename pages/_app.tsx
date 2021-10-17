@@ -2,6 +2,7 @@ import Head from 'next/head';
 import { ChakraProvider } from '@chakra-ui/react';
 import { AppProps } from 'next/app';
 import { QueryClient, QueryClientProvider } from "react-query";
+import { Provider } from "next-auth/client";
 import '@utils/main.css';
 import Layout from '@components/Layout';
 import theme from '@utils/theme';
@@ -18,21 +19,21 @@ function App({ Component, pageProps }: AppProps) {
         <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png" />
       </Head>
       <QueryClientProvider client={queryClient}>
-        <ChakraProvider theme={theme}>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        </ChakraProvider>
+      <Provider
+          session={pageProps.session}
+          options={{
+          keepAlive: 0, 
+          clientMaxAge: 0,
+        }}>
+          <ChakraProvider theme={theme}>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </ChakraProvider>
+        </Provider>
       </QueryClientProvider>
     </>
   );
 }
 
 export default App;
-
-  // useEffect(() => {
-  //   if ('serviceWorker' in navigator) {
-  //     navigator.serviceWorker.register('/service-worker.js');
-  //     console.log('Service worker registered successfully');
-  //   }
-  // }, []);

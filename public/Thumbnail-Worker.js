@@ -5,7 +5,7 @@ function Thumbnail(value, type) {
             thumbnailText = value.split('\n').slice(0, 18);
             break;
         case 'text':
-            thumbnailText = value.replace('\n', ' ').slice(0, 500);
+            thumbnailText = value.replace('\n', ' ').slice(0, 350);
             break;
     }
     return thumbnailText;

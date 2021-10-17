@@ -5,7 +5,9 @@ import {
 } from '@chakra-ui/react';
 import { KeyboardEvent } from 'react';
 
-import { FiChevronDown, FiTag } from 'react-icons/fi';
+import { FiChevronDown } from '@react-icons/all-files/fi/FiChevronDown';
+import { FiTag } from '@react-icons/all-files/fi/FiTag';
+
 
 import TagItem from '@components/TagItem';
 
