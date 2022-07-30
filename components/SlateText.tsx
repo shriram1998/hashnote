@@ -10,19 +10,18 @@ import { withHistory } from 'slate-history';
 import { GoBold } from '@react-icons/all-files/go/GoBold';
 import { FiItalic } from '@react-icons/all-files/fi/FiItalic';
 import { FiUnderline } from '@react-icons/all-files/fi/FiUnderline';
-
 import { AiOutlineOrderedList } from '@react-icons/all-files/ai/AiOutlineOrderedList';
 import { AiOutlineUnorderedList } from '@react-icons/all-files/ai/AiOutlineUnorderedList';
-
 import { BsCodeSlash } from '@react-icons/all-files/bs/BsCodeSlash';
 import { MdLooksOne} from '@react-icons/all-files/md/MdLooksOne';
 import { MdLooksTwo } from '@react-icons/all-files/md/MdLooksTwo';
 import { MdFormatQuote } from '@react-icons/all-files/md/MdFormatQuote';
 
+import { findUrlsInText } from "./withLinks";
 
 import { Heading, Text, Wrap, Tooltip } from '@chakra-ui/react';
-
 import { Button } from '@components/SlateTextComponents';
+
 
 const HOTKEYS = {
   'mod+b': 'bold',
@@ -33,10 +32,32 @@ const HOTKEYS = {
 
 const LIST_TYPES = ['numbered-list', 'bulleted-list']
 
+const myDecorator = ([node, path]) => {
+  const nodeText = node.text;
+
+  if (!nodeText) return [];
+
+  const urls = findUrlsInText(nodeText);
+
+  return urls.map(([url, index]) => {
+    return {
+      anchor: {
+        path,
+        offset: index,
+      },
+      focus: {
+        path,
+        offset: index + url.length,
+      },
+      decoration: "link",
+    };
+  });
+}
+
 export default function SlateText({ value,onValueChange}){
   const renderElement = useCallback(props => <Element {...props} />, [])
   const renderLeaf = useCallback(props => <Leaf {...props} />, [])
-  const editor = useMemo(() => withHistory(withReact(createEditor() as ReactEditor)), [])
+  const editor = useMemo(() => (withHistory(withReact(createEditor() as ReactEditor))), [])
 
   const TEXT_CONTROLS=[
     {'type':'mark','format':'bold','icon':<GoBold/>, 'label':'Bold', 'char':'B' },
@@ -66,7 +87,9 @@ export default function SlateText({ value,onValueChange}){
           );
         })}
       </Wrap>
+      
       <Editable
+        decorate={myDecorator}
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         placeholder="Enter note here..."
@@ -80,6 +103,8 @@ export default function SlateText({ value,onValueChange}){
             for (const hotkey in HOTKEYS) {
               if (isHotkey(hotkey, event as any)) {
                 event.preventDefault()
+                const { anchor, focus } = editor.selection;
+              // wrapLink(editor, { anchor, focus });
                 const mark = HOTKEYS[hotkey]
                 toggleMark(editor, mark)
               }
@@ -88,8 +113,39 @@ export default function SlateText({ value,onValueChange}){
         }}
       />
     </Slate>
+    
   )
 }
+
+const BlockButton = ({ format, icon }) => {
+  const editor = useSlate();
+  return (
+    <Button
+      icon={icon}
+      active={isBlockActive(editor, format)}
+      onMouseDown={event => {
+        event.preventDefault()
+        toggleBlock(editor, format)
+      }}
+    />
+  )
+}
+
+const MarkButton = ({ format, icon }) => {
+  const editor = useSlate();
+  return (
+    <Button
+      icon={icon}
+      active={isMarkActive(editor, format)}
+      onMouseDown={event => {
+        event.preventDefault()
+        toggleMark(editor, format)
+      }}
+    />
+  )
+}
+
+
 const TextButton = ({ type, format, icon, label, char="" }) => {
   const BtnType = () => {
     switch (type) {
@@ -199,34 +255,18 @@ const Leaf = ({ attributes, children, leaf }) => {
   if (leaf.underline) {
     children = <u>{children}</u>
   }
+  if (leaf.decoration === "link") {
+    children = (
+      <a
+        style={{cursor: "pointer"}}
+        href={leaf.text}
+        onClick={() => {
+          window.open(leaf.text, "_blank", "noopener,noreferrer");
+        }}
+      >
+        {children}
+      </a>
+    )}
 
   return <span {...attributes}>{children}</span>
-}
-
-const BlockButton = ({ format, icon }) => {
-  const editor = useSlate();
-  return (
-    <Button
-      icon={icon}
-      active={isBlockActive(editor, format)}
-      onMouseDown={event => {
-        event.preventDefault()
-        toggleBlock(editor, format)
-      }}
-    />
-  )
-}
-
-const MarkButton = ({ format, icon }) => {
-  const editor = useSlate();
-  return (
-    <Button
-      icon={icon}
-      active={isMarkActive(editor, format)}
-      onMouseDown={event => {
-        event.preventDefault()
-        toggleMark(editor, format)
-      }}
-    />
-  )
 }
